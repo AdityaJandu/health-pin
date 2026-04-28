@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:healthpin/services/auth_service.dart';
 import '../theme/app_theme.dart';
 import '../components/health_card.dart';
 
@@ -13,17 +14,18 @@ class HomeMapScreen extends StatelessWidget {
           // Simulated Map Background
           Container(
             color: AppTheme.backgroundWarmOffWhite,
-            child: const Center(
-              child: Text('Map View Placeholder'),
-            ),
+            child: const Center(child: Text('Map View Placeholder')),
           ),
-          
+
           // Custom Top App Bar overlay
           SafeArea(
             child: Padding(
               padding: const EdgeInsets.all(16.0),
               child: HealthCard(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 8,
+                ),
                 child: Row(
                   children: [
                     const Icon(Icons.search, color: AppTheme.textCharcoal),
@@ -62,7 +64,7 @@ class HomeMapScreen extends StatelessWidget {
                     color: Colors.black12,
                     blurRadius: 10,
                     offset: Offset(0, -2),
-                  )
+                  ),
                 ],
               ),
               child: Column(
@@ -82,18 +84,30 @@ class HomeMapScreen extends StatelessWidget {
                           width: 48,
                           height: 48,
                           decoration: BoxDecoration(
-                            color: AppTheme.primaryDeepForest.withValues(alpha: 0.1),
+                            color: AppTheme.primaryDeepForest.withValues(
+                              alpha: 0.1,
+                            ),
                             borderRadius: BorderRadius.circular(8),
                           ),
-                          child: const Icon(Icons.local_hospital, color: AppTheme.primaryDeepForest),
+                          child: const Icon(
+                            Icons.local_hospital,
+                            color: AppTheme.primaryDeepForest,
+                          ),
                         ),
                         const SizedBox(width: 16),
                         Expanded(
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text('City General Hospital', style: Theme.of(context).textTheme.titleMedium),
-                              Text('1.2 miles away • Open 24/7', style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: AppTheme.outline)),
+                              Text(
+                                'City General Hospital',
+                                style: Theme.of(context).textTheme.titleMedium,
+                              ),
+                              Text(
+                                '1.2 miles away • Open 24/7',
+                                style: Theme.of(context).textTheme.bodyMedium
+                                    ?.copyWith(color: AppTheme.outline),
+                              ),
                             ],
                           ),
                         ),
@@ -107,7 +121,9 @@ class HomeMapScreen extends StatelessWidget {
         ],
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {},
+        onPressed: () {
+          // AuthService().logOut();
+        },
         backgroundColor: AppTheme.accentClayOrange,
         foregroundColor: Colors.white,
         child: const Icon(Icons.add),
