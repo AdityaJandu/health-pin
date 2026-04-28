@@ -1,0 +1,97 @@
+import 'package:flutter/material.dart';
+import 'package:healthpin/components/bottom_nav_bar.dart';
+import 'package:healthpin/services/auth_service.dart';
+import 'package:healthpin/ui/home_map_screen.dart';
+
+class DashBoard extends StatefulWidget {
+  const DashBoard({super.key});
+
+  @override
+  State<DashBoard> createState() => _DashBoardState();
+}
+
+class _DashBoardState extends State<DashBoard> {
+  final AuthService _authServices = AuthService();
+
+  int currentIndex = 0;
+
+  final List<Widget> pageViewList = [
+    const HomeMapScreen(),
+    const PlaceholderScreen(title: 'Resources'),
+    const PlaceholderScreen(title: 'Impact'),
+    const PlaceholderScreen(title: 'Profile'),
+  ];
+
+  late String currentUserId;
+
+  @override
+  void initState() {
+    super.initState();
+    currentUserId = _authServices.getUserId() ?? '';
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: IndexedStack(
+        index: currentIndex,
+        children: pageViewList,
+      ),
+      bottomNavigationBar: BottomNavBar(
+        currentIndex: currentIndex,
+        onDestinationSelected: (int value) {
+          setState(() {
+            currentIndex = value;
+          });
+        },
+        item1: 'Map',
+        item2: 'Resources',
+        item3: 'Impact',
+        item4: 'Profile',
+      ),
+    );
+  }
+}
+
+class PlaceholderScreen extends StatelessWidget {
+  final String title;
+  const PlaceholderScreen({super.key, required this.title});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(title.toUpperCase()),
+        centerTitle: true,
+      ),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              title == 'Resources' 
+                  ? Icons.list_alt_rounded 
+                  : title == 'Impact' 
+                      ? Icons.favorite_rounded 
+                      : Icons.person_rounded,
+              size: 64,
+              color: Theme.of(context).colorScheme.primary.withAlpha(50),
+            ),
+            const SizedBox(height: 16),
+            Text(
+              '$title Screen',
+              style: Theme.of(context).textTheme.headlineMedium,
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'Detailed view coming soon...',
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                color: Theme.of(context).colorScheme.outline,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}

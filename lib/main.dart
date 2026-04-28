@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:healthpin/ui/splash_screen.dart';
+import 'package:healthpin/ui/auth_gate.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'theme/app_theme.dart';
 
@@ -25,7 +25,7 @@ class MyApp extends StatelessWidget {
       title: 'HealthPin',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.lightTheme,
-      home: const SplashScreen(),
+      home: const AuthGate(),
     );
   }
 }
