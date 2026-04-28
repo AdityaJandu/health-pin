@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:healthpin/ui/home_map_screen.dart';
+import 'package:healthpin/ui/dash_board.dart';
 import 'package:healthpin/ui/sign_up_screen.dart';
+import 'package:healthpin/ui/splash_screen.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class AuthGate extends StatelessWidget {
@@ -12,9 +13,7 @@ class AuthGate extends StatelessWidget {
       stream: Supabase.instance.client.auth.onAuthStateChange,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Scaffold(
-            body: Center(child: CircularProgressIndicator()),
-          );
+          return const SplashScreen();
         }
         if (snapshot.hasError) {
           return Scaffold(
@@ -25,9 +24,10 @@ class AuthGate extends StatelessWidget {
         if (session == null) {
           return const SignUpScreen();
         } else {
-          return const HomeMapScreen();
+          return const DashBoard();
         }
       },
     );
   }
 }
+

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class AppTheme {
   // Brand Colors
@@ -24,6 +25,7 @@ class AppTheme {
 
   static ThemeData get lightTheme {
     return ThemeData(
+      useMaterial3: true,
       colorScheme: const ColorScheme.light(
         primary: primary,
         primaryContainer: primaryContainer,
@@ -34,61 +36,52 @@ class AppTheme {
         outline: outline,
       ),
       scaffoldBackgroundColor: backgroundWarmOffWhite,
-      fontFamily: 'Work Sans',
-      textTheme: const TextTheme(
-        displayLarge: TextStyle(
-          fontFamily: 'Space Grotesk',
+      textTheme: GoogleFonts.workSansTextTheme().copyWith(
+        displayLarge: GoogleFonts.spaceGrotesk(
           fontWeight: FontWeight.w700,
           color: textCharcoal,
           fontSize: 48,
           height: 1.1,
-          letterSpacing: -0.02 * 48,
+          letterSpacing: -0.02,
         ),
-        headlineLarge: TextStyle(
-          fontFamily: 'Space Grotesk',
+        headlineLarge: GoogleFonts.spaceGrotesk(
           fontWeight: FontWeight.w700,
           color: textCharcoal,
           fontSize: 32,
           height: 1.2,
         ),
-        headlineMedium: TextStyle(
-          fontFamily: 'Space Grotesk',
+        headlineMedium: GoogleFonts.spaceGrotesk(
           fontWeight: FontWeight.w600,
           color: textCharcoal,
           fontSize: 24,
           height: 1.3,
         ),
-        titleLarge: TextStyle(
-          fontFamily: 'Space Grotesk',
+        titleLarge: GoogleFonts.spaceGrotesk(
           fontWeight: FontWeight.w600,
           color: textCharcoal,
           fontSize: 20,
           height: 1.4,
         ),
-        bodyLarge: TextStyle(
-          fontFamily: 'Work Sans',
+        bodyLarge: GoogleFonts.workSans(
           fontWeight: FontWeight.w400,
           color: textCharcoal,
           fontSize: 18,
           height: 1.6,
         ),
-        bodyMedium: TextStyle(
-          fontFamily: 'Work Sans',
+        bodyMedium: GoogleFonts.workSans(
           fontWeight: FontWeight.w400,
           color: textCharcoal,
           fontSize: 16,
           height: 1.6,
         ),
-        labelLarge: TextStyle(
-          fontFamily: 'Space Grotesk',
+        labelLarge: GoogleFonts.spaceGrotesk(
           fontWeight: FontWeight.w700,
           color: textCharcoal,
           fontSize: 14,
           height: 1.2,
-          letterSpacing: 0.05 * 14,
+          letterSpacing: 0.05,
         ),
-        labelMedium: TextStyle(
-          fontFamily: 'Work Sans',
+        labelMedium: GoogleFonts.workSans(
           fontWeight: FontWeight.w500,
           color: textCharcoal,
           fontSize: 12,
@@ -103,10 +96,9 @@ class AppTheme {
             borderRadius: BorderRadius.circular(defaultRadius),
           ),
           elevation: 2,
-          shadowColor: textCharcoal.withValues(alpha: 0.08),
+          shadowColor: textCharcoal.withAlpha(20),
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-          textStyle: const TextStyle(
-            fontFamily: 'Space Grotesk',
+          textStyle: GoogleFonts.spaceGrotesk(
             fontWeight: FontWeight.w700,
             fontSize: 16,
           ),
@@ -117,18 +109,17 @@ class AppTheme {
         fillColor: backgroundWarmOffWhite,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(defaultRadius),
-          borderSide: BorderSide(color: textCharcoal.withValues(alpha: 0.15)),
+          borderSide: BorderSide(color: textCharcoal.withAlpha(40)),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(defaultRadius),
-          borderSide: BorderSide(color: textCharcoal.withValues(alpha: 0.15)),
+          borderSide: BorderSide(color: textCharcoal.withAlpha(40)),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(defaultRadius),
-          borderSide: BorderSide(color: primary, width: 2),
+          borderSide: const BorderSide(color: primary, width: 2),
         ),
-        labelStyle: const TextStyle(
-          fontFamily: 'Space Grotesk',
+        labelStyle: GoogleFonts.spaceGrotesk(
           fontWeight: FontWeight.w700,
           color: textCharcoal,
         ),
@@ -138,10 +129,7 @@ class AppTheme {
         elevation: 0,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(defaultRadius),
-          side: BorderSide(
-            color: textCharcoal.withValues(alpha: 0.10),
-            width: 1,
-          ),
+          side: BorderSide(color: textCharcoal.withAlpha(25), width: 1),
         ),
       ),
     );
