@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:healthpin/components/bottom_nav_bar.dart';
 import 'package:healthpin/services/auth_service.dart';
+import 'package:healthpin/ui/add_resource_screen.dart';
 import 'package:healthpin/ui/home_map_screen.dart';
 
 class DashBoard extends StatefulWidget {
@@ -15,12 +16,18 @@ class _DashBoardState extends State<DashBoard> {
 
   int currentIndex = 0;
 
-  final List<Widget> pageViewList = [
-    const HomeMapScreen(),
-    const PlaceholderScreen(title: 'Resources'),
-    const PlaceholderScreen(title: 'Impact'),
-    const PlaceholderScreen(title: 'Profile'),
-  ];
+  List<Widget> get pageViewList => [
+        const HomeMapScreen(),
+        const PlaceholderScreen(title: 'Resources'),
+        AddResourceScreen(
+          onSuccess: () {
+            setState(() {
+              currentIndex = 0;
+            });
+          },
+        ),
+        const PlaceholderScreen(title: 'Profile'),
+      ];
 
   late String currentUserId;
 
@@ -33,10 +40,7 @@ class _DashBoardState extends State<DashBoard> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: IndexedStack(
-        index: currentIndex,
-        children: pageViewList,
-      ),
+      body: IndexedStack(index: currentIndex, children: pageViewList),
       bottomNavigationBar: BottomNavBar(
         currentIndex: currentIndex,
         onDestinationSelected: (int value) {
@@ -60,20 +64,17 @@ class PlaceholderScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(title.toUpperCase()),
-        centerTitle: true,
-      ),
+      appBar: AppBar(title: Text(title.toUpperCase()), centerTitle: true),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(
-              title == 'Resources' 
-                  ? Icons.list_alt_rounded 
-                  : title == 'Impact' 
-                      ? Icons.favorite_rounded 
-                      : Icons.person_rounded,
+              title == 'Resources'
+                  ? Icons.list_alt_rounded
+                  : title == 'Impact'
+                  ? Icons.favorite_rounded
+                  : Icons.person_rounded,
               size: 64,
               color: Theme.of(context).colorScheme.primary.withAlpha(50),
             ),

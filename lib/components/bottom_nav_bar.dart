@@ -24,10 +24,7 @@ class BottomNavBar extends StatelessWidget {
       decoration: BoxDecoration(
         color: AppTheme.surface,
         border: Border(
-          top: BorderSide(
-            color: AppTheme.textCharcoal.withAlpha(20),
-            width: 1,
-          ),
+          top: BorderSide(color: AppTheme.textCharcoal.withAlpha(20), width: 1),
         ),
       ),
       child: SafeArea(
@@ -52,7 +49,7 @@ class BottomNavBar extends StatelessWidget {
 
             /// Impact / Community
             SalomonBottomBarItem(
-              icon: const Icon(CupertinoIcons.heart),
+              icon: const Icon(Icons.add_location_alt_rounded),
               title: Text(item3),
               selectedColor: AppTheme.accentClayOrange,
             ),
@@ -69,4 +66,3 @@ class BottomNavBar extends StatelessWidget {
     );
   }
 }
-

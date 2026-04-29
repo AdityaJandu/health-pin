@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
+import 'package:healthpin/models/resource_model.dart';
+import 'package:healthpin/models/resource_type.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:healthpin/services/location_permission_service.dart';
 import 'package:healthpin/services/resource_service.dart';
-import 'package:healthpin/models/health_resource.dart';
 import '../theme/app_theme.dart';
 import '../components/health_card.dart';
+import 'add_resource_screen.dart';
 
 class HomeMapScreen extends StatefulWidget {
   const HomeMapScreen({super.key});
@@ -19,8 +21,9 @@ class _HomeMapScreenState extends State<HomeMapScreen> {
   Position? _currentPosition;
   String? _errorMessage;
   bool _isLoading = true;
-  List<HealthResource> _resources = [];
+  List<ResourceModel> _resources = [];
   final MapController _mapController = MapController();
+  final ResourceService _resourceService = ResourceService();
 
   @override
   void initState() {
@@ -29,24 +32,69 @@ class _HomeMapScreenState extends State<HomeMapScreen> {
   }
 
   Future<void> _initializeData() async {
-    setState(() => _isLoading = true);
+    setState(() {
+      _isLoading = true;
+      _errorMessage = null;
+    });
     try {
-      // Fetch both location and resources
-      final results = await Future.wait([
-        LocationPermissionService().determinePosition(),
-        ResourceService().getNearbyResources(),
-      ]);
+      // Get location first
+      final position = await LocationPermissionService().determinePosition();
+      setState(() => _currentPosition = position);
 
-      setState(() {
-        _currentPosition = results[0] as Position;
-        _resources = results[1] as List<HealthResource>;
-        _isLoading = false;
+      // Then listen to resources stream
+      _resourceService.streamResources().listen((resources) {
+        if (mounted) {
+          setState(() {
+            _resources = resources;
+            _isLoading = false;
+          });
+        }
       });
     } catch (e) {
       setState(() {
         _errorMessage = e.toString();
         _isLoading = false;
       });
+    }
+  }
+
+  // Helper: icon per resource type
+  IconData _iconForType(ResourceType type) {
+    switch (type) {
+      case ResourceType.clinic:
+        return Icons.local_hospital;
+      case ResourceType.pharmacy:
+        return Icons.local_pharmacy;
+      case ResourceType.water:
+        return Icons.water_drop;
+      case ResourceType.vaccine:
+        return Icons.vaccines;
+      case ResourceType.mentalHealth:
+        return Icons.psychology;
+      case ResourceType.bloodBank:
+        return Icons.bloodtype;
+      case ResourceType.emergency:
+        return Icons.emergency;
+    }
+  }
+
+  // Helper: color per resource type
+  Color _colorForType(ResourceType type) {
+    switch (type) {
+      case ResourceType.clinic:
+        return Colors.blue;
+      case ResourceType.pharmacy:
+        return Colors.green;
+      case ResourceType.water:
+        return Colors.cyan;
+      case ResourceType.vaccine:
+        return Colors.purple;
+      case ResourceType.mentalHealth:
+        return Colors.orange;
+      case ResourceType.bloodBank:
+        return Colors.red;
+      case ResourceType.emergency:
+        return Colors.deepOrange;
     }
   }
 
@@ -112,6 +160,7 @@ class _HomeMapScreenState extends State<HomeMapScreen> {
                 ),
                 MarkerLayer(
                   markers: [
+                    // User location marker
                     Marker(
                       point: LatLng(
                         _currentPosition!.latitude,
@@ -120,9 +169,22 @@ class _HomeMapScreenState extends State<HomeMapScreen> {
                       width: 80,
                       height: 80,
                       child: const Icon(
-                        Icons.location_pin,
+                        Icons.my_location,
                         color: AppTheme.accentClayOrange,
                         size: 40,
+                      ),
+                    ),
+                    // Resource markers
+                    ..._resources.map(
+                      (resource) => Marker(
+                        point: LatLng(resource.latitude, resource.longitude),
+                        width: 60,
+                        height: 60,
+                        child: Icon(
+                          _iconForType(resource.type),
+                          color: _colorForType(resource.type),
+                          size: 32,
+                        ),
                       ),
                     ),
                   ],
@@ -130,7 +192,7 @@ class _HomeMapScreenState extends State<HomeMapScreen> {
               ],
             ),
 
-          // Custom Top App Bar overlay
+          // Top Search Bar
           SafeArea(
             child: Padding(
               padding: const EdgeInsets.all(16.0),
@@ -162,10 +224,10 @@ class _HomeMapScreenState extends State<HomeMapScreen> {
             ),
           ),
 
-          // Draggable Bottom Sheet for Nearby Resources
+          // Draggable Bottom Sheet
           DraggableScrollableSheet(
             initialChildSize: 0.3,
-            minChildSize: 0.15,
+            minChildSize: 0.25,
             maxChildSize: 0.8,
             builder: (context, scrollController) {
               return Container(
@@ -195,72 +257,129 @@ class _HomeMapScreenState extends State<HomeMapScreen> {
                       ),
                     ),
                     Expanded(
-                      child: ListView.builder(
-                        controller: scrollController,
-                        padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
-                        itemCount: _resources.length + 1,
-                        itemBuilder: (context, index) {
-                          if (index == 0) {
-                            return Padding(
-                              padding: const EdgeInsets.only(bottom: 16),
-                              child: Text(
-                                'Nearby Resources',
-                                style: Theme.of(context).textTheme.titleLarge,
+                      child: _isLoading
+                          ? const Center(
+                              child: CircularProgressIndicator(
+                                color: AppTheme.primaryDeepForest,
                               ),
-                            );
-                          }
+                            )
+                          : _resources.isEmpty
+                          ? Center(
+                              child: Text(
+                                'No resources nearby.\nBe the first to add one!',
+                                textAlign: TextAlign.center,
+                                style: Theme.of(context).textTheme.bodyMedium,
+                              ),
+                            )
+                          : ListView.builder(
+                              controller: scrollController,
+                              padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
+                              itemCount: _resources.length + 1,
+                              itemBuilder: (context, index) {
+                                if (index == 0) {
+                                  return Padding(
+                                    padding: const EdgeInsets.only(bottom: 16),
+                                    child: Text(
+                                      '${_resources.length} Nearby Resources',
+                                      style: Theme.of(
+                                        context,
+                                      ).textTheme.titleLarge,
+                                    ),
+                                  );
+                                }
 
-                          final resource = _resources[index - 1];
-                          return Padding(
-                            padding: const EdgeInsets.only(bottom: 12),
-                            child: HealthCard(
-                              onTap: () {},
-                              child: Row(
-                                children: [
-                                  Container(
-                                    width: 48,
-                                    height: 48,
-                                    decoration: BoxDecoration(
-                                      color: resource.color.withValues(
-                                        alpha: 0.1,
-                                      ),
-                                      borderRadius: BorderRadius.circular(8),
-                                    ),
-                                    child: Icon(
-                                      resource.icon,
-                                      color: resource.color,
-                                    ),
-                                  ),
-                                  const SizedBox(width: 16),
-                                  Expanded(
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
+                                final resource = _resources[index - 1];
+                                final color = _colorForType(resource.type);
+                                final icon = _iconForType(resource.type);
+
+                                return Padding(
+                                  padding: const EdgeInsets.only(bottom: 12),
+                                  child: HealthCard(
+                                    onTap: () {},
+                                    child: Row(
                                       children: [
-                                        Text(
-                                          resource.name,
-                                          style: Theme.of(
-                                            context,
-                                          ).textTheme.titleMedium,
+                                        Container(
+                                          width: 48,
+                                          height: 48,
+                                          decoration: BoxDecoration(
+                                            color: color.withValues(alpha: 0.1),
+                                            borderRadius: BorderRadius.circular(
+                                              8,
+                                            ),
+                                          ),
+                                          child: Icon(icon, color: color),
                                         ),
-                                        Text(
-                                          '${resource.distance} • ${resource.status}',
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .bodyMedium
-                                              ?.copyWith(
-                                                color: AppTheme.outline,
+                                        const SizedBox(width: 16),
+                                        Expanded(
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                resource.name,
+                                                style: Theme.of(
+                                                  context,
+                                                ).textTheme.titleMedium,
                                               ),
+                                              Text(
+                                                resource.address,
+                                                maxLines: 1,
+                                                overflow: TextOverflow.ellipsis,
+                                                style: Theme.of(context)
+                                                    .textTheme
+                                                    .bodyMedium
+                                                    ?.copyWith(
+                                                      color: AppTheme.outline,
+                                                    ),
+                                              ),
+                                              Row(
+                                                children: [
+                                                  const Icon(
+                                                    Icons.thumb_up_outlined,
+                                                    size: 12,
+                                                    color: AppTheme
+                                                        .primaryDeepForest,
+                                                  ),
+                                                  const SizedBox(width: 4),
+                                                  Text(
+                                                    '${resource.upvoteCount}',
+                                                    style: Theme.of(context)
+                                                        .textTheme
+                                                        .bodySmall
+                                                        ?.copyWith(
+                                                          color: AppTheme
+                                                              .primaryDeepForest,
+                                                        ),
+                                                  ),
+                                                  if (resource.isVerified) ...[
+                                                    const SizedBox(width: 8),
+                                                    const Icon(
+                                                      Icons.verified,
+                                                      size: 12,
+                                                      color: Colors.green,
+                                                    ),
+                                                    const SizedBox(width: 4),
+                                                    Text(
+                                                      'Verified',
+                                                      style: Theme.of(context)
+                                                          .textTheme
+                                                          .bodySmall
+                                                          ?.copyWith(
+                                                            color: Colors.green,
+                                                          ),
+                                                    ),
+                                                  ],
+                                                ],
+                                              ),
+                                            ],
+                                          ),
                                         ),
                                       ],
                                     ),
                                   ),
-                                ],
-                              ),
+                                );
+                              },
                             ),
-                          );
-                        },
-                      ),
                     ),
                   ],
                 ),
@@ -270,15 +389,12 @@ class _HomeMapScreenState extends State<HomeMapScreen> {
         ],
       ),
       floatingActionButton: FloatingActionButton(
+        heroTag: 'recenter',
         onPressed: () async {
           try {
             final position = await LocationPermissionService()
                 .determinePosition();
-
-            setState(() {
-              _currentPosition = position;
-            });
-
+            setState(() => _currentPosition = position);
             _mapController.move(
               LatLng(position.latitude, position.longitude),
               15,
