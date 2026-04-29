@@ -3,12 +3,12 @@ import 'package:healthpin/theme/app_theme.dart';
 
 class EnhancedSearchBar extends StatefulWidget {
   final ValueChanged<String> onChanged;
-  final int resultCount;
+  final int? resultCount;
 
   const EnhancedSearchBar({
     super.key,
     required this.onChanged,
-    required this.resultCount,
+    this.resultCount,
   });
 
   @override

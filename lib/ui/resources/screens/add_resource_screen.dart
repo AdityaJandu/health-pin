@@ -307,9 +307,9 @@ class _AddResourceScreenState extends State<AddResourceScreen> {
                       child: ElevatedButton(
                         onPressed: _isSubmitting ? null : _submitResource,
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: AppTheme.primaryDeepForest,
+                          backgroundColor: AppTheme.accentClayOrange,
                           foregroundColor: Colors.white,
-                          disabledBackgroundColor: AppTheme.primaryDeepForest
+                          disabledBackgroundColor: AppTheme.accentClayOrange
                               .withAlpha(100),
                           elevation: 0,
                           shape: RoundedRectangleBorder(

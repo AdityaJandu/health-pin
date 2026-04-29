@@ -6,7 +6,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:healthpin/services/location_permission_service.dart';
 import 'package:healthpin/services/resource_service.dart';
 import 'package:healthpin/ui/home/widgets/resource_bottom_sheet.dart';
-import 'package:healthpin/ui/home/widgets/enhanced_search_bar.dart';
+import 'package:healthpin/components/enhanced_search_bar.dart';
 import 'package:healthpin/ui/home/widgets/type_filter_bar.dart';
 import 'package:healthpin/ui/home/widgets/count_badge.dart';
 import 'package:healthpin/ui/home/widgets/resource_preview_card.dart';

@@ -24,7 +24,7 @@ class ResourceBottomSheet extends StatelessWidget {
       builder: (context, scrollController) {
         return Container(
           decoration: const BoxDecoration(
-            color: AppTheme.surface,
+            color: AppTheme.backgroundWarmOffWhite,
             borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
             boxShadow: [
               BoxShadow(
@@ -56,40 +56,40 @@ class ResourceBottomSheet extends StatelessWidget {
                         ),
                       )
                     : resources.isEmpty
-                        ? Center(
-                            child: Text(
-                              'No resources nearby.\nBe the first to add one!',
-                              textAlign: TextAlign.center,
-                              style: Theme.of(context).textTheme.bodyMedium,
-                            ),
-                          )
-                        : ListView.builder(
-                            controller: scrollController,
-                            padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
-                            itemCount: resources.length + 1,
-                            itemBuilder: (context, index) {
-                              if (index == 0) {
-                                return Padding(
-                                  padding: const EdgeInsets.only(bottom: 16),
-                                  child: Text(
-                                    '${resources.length} Nearby Resources',
-                                    style: Theme.of(context).textTheme.titleLarge,
-                                  ),
-                                );
-                              }
+                    ? Center(
+                        child: Text(
+                          'No resources nearby.\nBe the first to add one!',
+                          textAlign: TextAlign.center,
+                          style: Theme.of(context).textTheme.bodyMedium,
+                        ),
+                      )
+                    : ListView.builder(
+                        controller: scrollController,
+                        padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
+                        itemCount: resources.length + 1,
+                        itemBuilder: (context, index) {
+                          if (index == 0) {
+                            return Padding(
+                              padding: const EdgeInsets.only(bottom: 16),
+                              child: Text(
+                                '${resources.length} Nearby Resources',
+                                style: Theme.of(context).textTheme.titleLarge,
+                              ),
+                            );
+                          }
 
-                              final resource = resources[index - 1];
-                              final distance = distanceFormatter(resource);
+                          final resource = resources[index - 1];
+                          final distance = distanceFormatter(resource);
 
-                              return ResourceListItem(
-                                resource: resource,
-                                distance: distance,
-                                onTap: () {
-                                  // Handle tap
-                                },
-                              );
+                          return ResourceListItem(
+                            resource: resource,
+                            distance: distance,
+                            onTap: () {
+                              // Handle tap
                             },
-                          ),
+                          );
+                        },
+                      ),
               ),
             ],
           ),

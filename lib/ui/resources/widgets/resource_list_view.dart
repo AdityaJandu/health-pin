@@ -17,7 +17,7 @@ class ResourceListView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+      padding: const EdgeInsets.fromLTRB(16, 16, 16, 24),
       itemCount: resources.length,
       itemBuilder: (context, index) {
         final resource = resources[index];

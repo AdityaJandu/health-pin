@@ -4,10 +4,14 @@ import 'package:geolocator/geolocator.dart';
 import 'package:healthpin/models/resource_model.dart';
 import 'package:healthpin/services/location_permission_service.dart';
 import 'package:healthpin/services/resource_service.dart';
-import 'package:healthpin/theme/app_theme.dart';
-import 'package:healthpin/ui/home/widgets/resource_search_bar.dart';
+
+import 'package:healthpin/ui/resources/widgets/resource_list_header.dart';
 import 'package:healthpin/ui/resources/widgets/resource_list_states.dart';
 import 'package:healthpin/ui/resources/widgets/resource_list_view.dart';
+
+// ─────────────────────────────────────────────────────────────────────────────
+// LIST RESOURCE SCREEN
+// ─────────────────────────────────────────────────────────────────────────────
 
 class ListResourceScreen extends StatefulWidget {
   const ListResourceScreen({super.key});
@@ -44,7 +48,6 @@ class _ListResourceScreenState extends State<ListResourceScreen> {
       _errorMessage = null;
       _resources = [];
     });
-
     _fetchLocation();
     _setupResourceStream();
   }
@@ -52,19 +55,14 @@ class _ListResourceScreenState extends State<ListResourceScreen> {
   Future<void> _fetchLocation() async {
     try {
       final position = await LocationPermissionService().getCurrentLocation();
-
       if (!mounted) return;
       setState(() {
         _currentPosition = position;
-        if (_resources.isNotEmpty) {
-          _resources = _sortByDistance(_resources);
-        }
+        if (_resources.isNotEmpty) _resources = _sortByDistance(_resources);
       });
     } catch (e) {
       if (!mounted) return;
-      setState(() {
-        _errorMessage = e.toString();
-      });
+      setState(() => _errorMessage = e.toString());
     }
   }
 
@@ -117,74 +115,40 @@ class _ListResourceScreenState extends State<ListResourceScreen> {
 
   String _formatDistance(ResourceModel resource) {
     if (_currentPosition == null) return 'Locating...';
-
     final meters = _distanceToResource(resource);
-    if (meters < 1000) {
-      return '${meters.toStringAsFixed(0)}m away';
-    } else {
-      return '${(meters / 1000).toStringAsFixed(1)}km away';
-    }
+    return meters < 1000
+        ? '${meters.toStringAsFixed(0)}m away'
+        : '${(meters / 1000).toStringAsFixed(1)}km away';
   }
 
   List<ResourceModel> _getFilteredResources() {
     if (_searchQuery.isEmpty) return _resources;
-    return _resources.where((resource) {
-      final query = _searchQuery.toLowerCase();
-      return resource.name.toLowerCase().contains(query) ||
-          resource.address.toLowerCase().contains(query) ||
-          resource.type.name.toLowerCase().contains(query);
+    return _resources.where((r) {
+      final q = _searchQuery.toLowerCase();
+      return r.name.toLowerCase().contains(q) ||
+          r.address.toLowerCase().contains(q) ||
+          r.type.name.toLowerCase().contains(q);
     }).toList();
   }
 
   @override
   Widget build(BuildContext context) {
-    final filteredResources = _getFilteredResources();
+    final filtered = _getFilteredResources();
 
     return Column(
       children: [
-        _buildSearchHeader(),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 4.0),
-          child: Align(
-            alignment: Alignment.centerLeft,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Available Resources',
-                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                    fontWeight: FontWeight.w700,
-                    color: AppTheme.primaryDeepForest,
-                    letterSpacing: -0.3,
-                  ),
-                ),
-                Text(
-                  'Showing active locations in your area',
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: AppTheme.outline,
-                    fontWeight: FontWeight.w400,
-                    fontSize: 14,
-                  ),
-                ),
-              ],
-            ),
-          ),
+        ResourceListHeader(
+          count: filtered.length,
+          isSearching: _searchQuery.isNotEmpty,
+          hasPosition: _currentPosition != null,
+          onSearchChanged: (v) => setState(() => _searchQuery = v),
         ),
-        Expanded(child: _buildContent(filteredResources)),
+        Expanded(child: _buildContent(filtered)),
       ],
     );
   }
 
-  Widget _buildSearchHeader() {
-    return Container(
-      padding: const EdgeInsets.fromLTRB(4, 4, 4, 2),
-      child: ResourceSearchBar(
-        onChanged: (value) => setState(() => _searchQuery = value),
-      ),
-    );
-  }
-
-  Widget _buildContent(List<ResourceModel> filteredResources) {
+  Widget _buildContent(List<ResourceModel> filtered) {
     if (_errorMessage != null) {
       return ResourceErrorState(
         errorMessage: _errorMessage!,
@@ -196,15 +160,16 @@ class _ListResourceScreenState extends State<ListResourceScreen> {
       return const ResourceLoadingSkeleton();
     }
 
-    if (filteredResources.isEmpty) {
+    if (filtered.isEmpty) {
       return ResourceEmptyState(searchQuery: _searchQuery);
     }
 
     return ResourceListView(
-      resources: filteredResources,
+      resources: filtered,
       distanceFormatter: _formatDistance,
-      onResourceTap: (resource) {},
+      onResourceTap: (resource) {
+        // Navigate to details if needed
+      },
     );
   }
 }
-
