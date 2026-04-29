@@ -120,9 +120,38 @@ class _ProfileScreenState extends State<ProfileScreen>
                 ),
                 const SizedBox(width: 8),
               ],
-              flexibleSpace: FlexibleSpaceBar(
-                collapseMode: CollapseMode.parallax,
-                background: ProfileHeader(userModel: userModel),
+              flexibleSpace: LayoutBuilder(
+                builder: (BuildContext context, BoxConstraints constraints) {
+                  final top = constraints.maxHeight;
+                  final safeArea = MediaQuery.of(context).padding.top;
+                  final collapsedHeight = kToolbarHeight + safeArea;
+
+                  // Calculate scroll-driven opacity for a buttery smooth fade
+                  // Starts fading in when within 60px of the collapsed height
+                  final fadeStart = collapsedHeight + 60.0;
+                  final fadeEnd = collapsedHeight;
+                  final double scrollOpacity =
+                      1.0 -
+                      ((top - fadeEnd) / (fadeStart - fadeEnd)).clamp(0.0, 1.0);
+
+                  return FlexibleSpaceBar(
+                    collapseMode: CollapseMode.parallax,
+                    centerTitle: true,
+                    title: Opacity(
+                      opacity: scrollOpacity,
+                      child: Text(
+                        userModel?.fullName ?? 'Field Worker',
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 18,
+                          fontWeight: FontWeight.w700,
+                          letterSpacing: 0,
+                        ),
+                      ),
+                    ),
+                    background: ProfileHeader(userModel: userModel),
+                  );
+                },
               ),
             ),
 
@@ -193,4 +222,3 @@ class _ProfileScreenState extends State<ProfileScreen>
     );
   }
 }
-

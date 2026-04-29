@@ -51,9 +51,7 @@ class _ResourceImagePickerState extends State<ResourceImagePicker> {
           _imageBytes = bytes;
         });
       } else {
-        setState(() {
-          _imageFile = pickedFile;
-        });
+        setState(() => _imageFile = pickedFile);
       }
       widget.onImageSelected(pickedFile);
     }
@@ -62,10 +60,7 @@ class _ResourceImagePickerState extends State<ResourceImagePicker> {
   ImageProvider? _getImageProvider() {
     if (_imageFile == null) return null;
     if (kIsWeb) {
-      if (_imageBytes != null) {
-        return MemoryImage(_imageBytes!);
-      }
-      return null;
+      return _imageBytes != null ? MemoryImage(_imageBytes!) : null;
     } else {
       return FileImage(File(_imageFile!.path));
     }
@@ -73,69 +68,128 @@ class _ResourceImagePickerState extends State<ResourceImagePicker> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          'RESOURCE PHOTO',
-          style: Theme.of(context).textTheme.labelLarge,
-        ),
-        const SizedBox(height: 8),
-        GestureDetector(
-          onTap: _pickImage,
-          child: Container(
-            height: 180,
-            width: double.infinity,
-            decoration: BoxDecoration(
-              color: AppTheme.backgroundWarmOffWhite,
-              borderRadius: BorderRadius.circular(AppTheme.defaultRadius),
-              border: Border.all(
-                color: AppTheme.textCharcoal.withAlpha(40),
-              ),
-              image: _getImageProvider() != null
-                  ? DecorationImage(
-                      image: _getImageProvider()!,
-                      fit: BoxFit.cover,
-                    )
-                  : null,
+    final imageProvider = _getImageProvider();
+    final hasImage = imageProvider != null;
+
+    return GestureDetector(
+      onTap: _pickImage,
+      child: Container(
+        height: 190,
+        width: double.infinity,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withAlpha(15),
+              blurRadius: 12,
+              offset: const Offset(0, 2),
             ),
-            child: _getImageProvider() == null
-                ? Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(
-                        Icons.add_a_photo_outlined,
-                        size: 40,
-                        color: AppTheme.primaryDeepForest.withAlpha(180),
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
-                        'TAP TO SELECT FROM GALLERY',
-                        style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                              color: AppTheme.primaryDeepForest,
-                            ),
-                      ),
-                    ],
-                  )
-                : Align(
-                    alignment: Alignment.bottomRight,
-                    child: Container(
-                      margin: const EdgeInsets.all(12),
-                      padding: const EdgeInsets.all(8),
-                      decoration: BoxDecoration(
-                        color: Colors.black.withAlpha(120),
-                        shape: BoxShape.circle,
-                      ),
-                      child: const Icon(
-                        Icons.edit,
-                        color: Colors.white,
-                        size: 20,
+          ],
+          image: hasImage
+              ? DecorationImage(image: imageProvider, fit: BoxFit.cover)
+              : null,
+          gradient: hasImage
+              ? null
+              : LinearGradient(
+                  colors: [
+                    AppTheme.primaryDeepForest.withAlpha(200),
+                    AppTheme.primaryDeepForest.withAlpha(140),
+                  ],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
+        ),
+        child: hasImage
+            ? Stack(
+                children: [
+                  // Dark scrim over image
+                  Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(16),
+                      gradient: LinearGradient(
+                        colors: [
+                          Colors.transparent,
+                          Colors.black.withAlpha(100),
+                        ],
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
                       ),
                     ),
                   ),
-          ),
-        ),
-      ],
+                  // Edit badge
+                  Positioned(
+                    bottom: 12,
+                    right: 12,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 6,
+                      ),
+                      decoration: BoxDecoration(
+                        color: Colors.black.withAlpha(140),
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: const Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(
+                            Icons.edit_rounded,
+                            color: Colors.white,
+                            size: 14,
+                          ),
+                          SizedBox(width: 6),
+                          Text(
+                            'CHANGE PHOTO',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 11,
+                              fontWeight: FontWeight.w700,
+                              letterSpacing: 0.8,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              )
+            : Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(14),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withAlpha(30),
+                      shape: BoxShape.circle,
+                    ),
+                    child: const Icon(
+                      Icons.add_a_photo_outlined,
+                      size: 32,
+                      color: Colors.white,
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  const Text(
+                    'ADD RESOURCE PHOTO',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 13,
+                      fontWeight: FontWeight.w800,
+                      letterSpacing: 1.1,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    'Tap to select from gallery',
+                    style: TextStyle(
+                      color: Colors.white.withAlpha(180),
+                      fontSize: 12,
+                      fontWeight: FontWeight.w400,
+                    ),
+                  ),
+                ],
+              ),
+      ),
     );
   }
 }

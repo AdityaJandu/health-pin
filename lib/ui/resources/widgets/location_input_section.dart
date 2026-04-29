@@ -49,23 +49,38 @@ class LocationInputSection extends StatelessWidget {
           ],
         ),
         const SizedBox(height: 12),
-        TextButton.icon(
-          onPressed: isFetchingLocation ? null : onFetchLocation,
-          icon: isFetchingLocation
-              ? const SizedBox(
-                  width: 16,
-                  height: 16,
-                  child: CircularProgressIndicator(strokeWidth: 2),
-                )
-              : const Icon(Icons.my_location, size: 18),
-          label: Text(
-            isFetchingLocation
-                ? 'FETCHING LOCATION...'
-                : 'USE CURRENT LOCATION',
-          ),
-          style: TextButton.styleFrom(
-            foregroundColor: AppTheme.primaryDeepForest,
-            padding: EdgeInsets.zero,
+        SizedBox(
+          width: double.infinity,
+          child: OutlinedButton.icon(
+            onPressed: isFetchingLocation ? null : onFetchLocation,
+            icon: isFetchingLocation
+                ? SizedBox(
+                    width: 15,
+                    height: 15,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      color: AppTheme.primaryDeepForest,
+                    ),
+                  )
+                : const Icon(Icons.my_location_rounded, size: 17),
+            label: Text(
+              isFetchingLocation
+                  ? 'FETCHING LOCATION...'
+                  : 'USE CURRENT LOCATION',
+              style: const TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.w700,
+                letterSpacing: 0.8,
+              ),
+            ),
+            style: OutlinedButton.styleFrom(
+              foregroundColor: AppTheme.primaryDeepForest,
+              side: BorderSide(color: AppTheme.primaryDeepForest.withAlpha(80)),
+              padding: const EdgeInsets.symmetric(vertical: 12),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
+            ),
           ),
         ),
       ],
