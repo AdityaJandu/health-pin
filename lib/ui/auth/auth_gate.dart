@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:healthpin/ui/dash_board.dart';
-import 'package:healthpin/ui/sign_up_screen.dart';
-import 'package:healthpin/ui/splash_screen.dart';
+import 'package:healthpin/ui/dashboard/screens/dash_board.dart';
+import 'package:healthpin/ui/auth/screens/sign_up_screen.dart';
+import 'package:healthpin/ui/auth/screens/splash_screen.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class AuthGate extends StatelessWidget {

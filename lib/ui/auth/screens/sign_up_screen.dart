@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:healthpin/models/user_model.dart';
 import 'package:healthpin/services/auth_service.dart';
 import 'package:healthpin/services/user_database_service.dart';
-import 'package:healthpin/ui/auth_gate.dart';
-import 'package:healthpin/ui/login_screen.dart';
-import '../components/primary_button.dart';
-import '../components/custom_text_field.dart';
+import 'package:healthpin/ui/auth/auth_gate.dart';
+import 'package:healthpin/ui/auth/screens/login_screen.dart';
+import 'package:healthpin/components/primary_button.dart';
+import 'package:healthpin/components/custom_text_field.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});

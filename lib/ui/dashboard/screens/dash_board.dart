@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:healthpin/components/bottom_nav_bar.dart';
 import 'package:healthpin/services/auth_service.dart';
-import 'package:healthpin/ui/add_resource_screen.dart';
-import 'package:healthpin/ui/home_map_screen.dart';
+import 'package:healthpin/ui/home/screens/home_map_screen.dart';
+import 'package:healthpin/ui/resources/screens/add_resource_screen.dart';
 
 class DashBoard extends StatefulWidget {
   const DashBoard({super.key});
@@ -17,17 +17,17 @@ class _DashBoardState extends State<DashBoard> {
   int currentIndex = 0;
 
   List<Widget> get pageViewList => [
-        const HomeMapScreen(),
-        const PlaceholderScreen(title: 'Resources'),
-        AddResourceScreen(
-          onSuccess: () {
-            setState(() {
-              currentIndex = 0;
-            });
-          },
-        ),
-        const PlaceholderScreen(title: 'Profile'),
-      ];
+    const HomeMapScreen(),
+    const PlaceholderScreen(title: 'Resources'),
+    AddResourceScreen(
+      onSuccess: () {
+        setState(() {
+          currentIndex = 0;
+        });
+      },
+    ),
+    const PlaceholderScreen(title: 'Profile'),
+  ];
 
   late String currentUserId;
 
