@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:healthpin/components/bottom_nav_bar.dart';
+import 'package:healthpin/ui/dashboard/widgets/bottom_nav_bar.dart';
 import 'package:healthpin/services/auth_service.dart';
 import 'package:healthpin/ui/home/screens/home_map_screen.dart';
 import 'package:healthpin/ui/resources/screens/add_resource_screen.dart';
+import 'package:healthpin/ui/resources/screens/list_resource_screen.dart';
+import 'package:healthpin/ui/profile/screens/profile_screen.dart';
 
 class DashBoard extends StatefulWidget {
   const DashBoard({super.key});
@@ -18,7 +20,7 @@ class _DashBoardState extends State<DashBoard> {
 
   List<Widget> get pageViewList => [
     const HomeMapScreen(),
-    const PlaceholderScreen(title: 'Resources'),
+    const ListResourceScreen(),
     AddResourceScreen(
       onSuccess: () {
         setState(() {
@@ -26,16 +28,8 @@ class _DashBoardState extends State<DashBoard> {
         });
       },
     ),
-    const PlaceholderScreen(title: 'Profile'),
+    const ProfileScreen(),
   ];
-
-  late String currentUserId;
-
-  @override
-  void initState() {
-    super.initState();
-    currentUserId = _authServices.getUserId() ?? '';
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -50,7 +44,7 @@ class _DashBoardState extends State<DashBoard> {
         },
         item1: 'Map',
         item2: 'Resources',
-        item3: 'Impact',
+        item3: 'Add',
         item4: 'Profile',
       ),
     );
