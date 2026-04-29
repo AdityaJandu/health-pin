@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:healthpin/components/primary_button.dart';
 import 'package:healthpin/models/resource_model.dart';
 import 'package:healthpin/models/user_model.dart';
 import 'package:healthpin/services/auth_service.dart';
@@ -239,7 +238,7 @@ class _ProfileHeaderBg extends StatelessWidget {
             height: 200,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              color: Colors.white.withOpacity(0.05),
+              color: Colors.white.withValues(alpha: 0.05),
             ),
           ),
         ),
@@ -251,7 +250,7 @@ class _ProfileHeaderBg extends StatelessWidget {
             height: 130,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              color: Colors.white.withOpacity(0.04),
+              color: Colors.white.withValues(alpha: 0.04),
             ),
           ),
         ),
@@ -268,10 +267,10 @@ class _ProfileHeaderBg extends StatelessWidget {
                 width: 80,
                 height: 80,
                 decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.15),
+                  color: Colors.white.withValues(alpha: 0.15),
                   borderRadius: BorderRadius.circular(22),
                   border: Border.all(
-                    color: Colors.white.withOpacity(0.35),
+                    color: Colors.white.withValues(alpha: 0.35),
                     width: 2,
                   ),
                 ),
@@ -355,7 +354,7 @@ class _StatsStrip extends StatelessWidget {
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.06),
+            color: Colors.black.withValues(alpha: 0.06),
             blurRadius: 20,
             offset: const Offset(0, 6),
           ),
@@ -427,7 +426,7 @@ class _StatCell extends StatelessWidget {
           Icon(
             icon,
             size: 20,
-            color: valueColor ?? AppTheme.textCharcoal.withOpacity(0.4),
+            color: valueColor ?? AppTheme.textCharcoal.withValues(alpha: 0.4),
           ),
           const SizedBox(height: 6),
           Text(
@@ -460,7 +459,7 @@ class _VerticalDivider extends StatelessWidget {
     return Container(
       width: 1,
       height: 40,
-      color: Colors.grey.withOpacity(0.15),
+      color: Colors.grey.withValues(alpha: 0.15),
     );
   }
 }
@@ -516,7 +515,7 @@ class _SubmissionsSliver extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 24),
           sliver: SliverList.separated(
             itemCount: resources.length,
-            separatorBuilder: (_, __) => const SizedBox(height: 10),
+            separatorBuilder: (_, _) => const SizedBox(height: 10),
             itemBuilder: (context, index) {
               return FadeTransition(
                 opacity: fadeAnim,
@@ -547,7 +546,7 @@ class _SubmissionCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 14,
             offset: const Offset(0, 4),
           ),
@@ -578,13 +577,13 @@ class _EmptyState extends StatelessWidget {
             width: 72,
             height: 72,
             decoration: BoxDecoration(
-              color: (color ?? AppTheme.primaryDeepForest).withOpacity(0.08),
+              color: (color ?? AppTheme.primaryDeepForest).withValues(alpha: 0.08),
               shape: BoxShape.circle,
             ),
             child: Icon(
               icon,
               size: 32,
-              color: (color ?? AppTheme.primaryDeepForest).withOpacity(0.5),
+              color: (color ?? AppTheme.primaryDeepForest).withValues(alpha: 0.5),
             ),
           ),
           const SizedBox(height: 16),

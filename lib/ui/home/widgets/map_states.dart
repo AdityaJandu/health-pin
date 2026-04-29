@@ -19,7 +19,7 @@ class MapLoadingState extends StatelessWidget {
               width: 72,
               height: 72,
               decoration: BoxDecoration(
-                color: AppTheme.primaryDeepForest.withOpacity(0.08),
+                color: AppTheme.primaryDeepForest.withValues(alpha: 0.08),
                 shape: BoxShape.circle,
               ),
               child: const Center(
@@ -35,7 +35,7 @@ class MapLoadingState extends StatelessWidget {
               style: TextStyle(
                 fontSize: 15,
                 fontWeight: FontWeight.w600,
-                color: AppTheme.textCharcoal.withOpacity(0.7),
+                color: AppTheme.textCharcoal.withValues(alpha: 0.7),
               ),
             ),
             const SizedBox(height: 6),
@@ -77,7 +77,7 @@ class MapErrorState extends StatelessWidget {
                 width: 72,
                 height: 72,
                 decoration: BoxDecoration(
-                  color: Colors.redAccent.withOpacity(0.08),
+                  color: Colors.redAccent.withValues(alpha: 0.08),
                   shape: BoxShape.circle,
                 ),
                 child: const Icon(

@@ -36,7 +36,7 @@ class ResourceMapView extends StatelessWidget {
         ),
         initialZoom: 13,
         onMapReady: onMapReady,
-        onTap: (_, __) => onMarkerTap(null),
+        onTap: (_, _) => onMarkerTap(null),
       ),
       children: [
         TileLayer(
@@ -62,9 +62,9 @@ class ResourceMapView extends StatelessWidget {
                     height: 48,
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      color: AppTheme.accentClayOrange.withOpacity(0.15),
+                      color: AppTheme.accentClayOrange.withValues(alpha: 0.15),
                       border: Border.all(
-                        color: AppTheme.accentClayOrange.withOpacity(0.35),
+                        color: AppTheme.accentClayOrange.withValues(alpha: 0.35),
                         width: 1.5,
                       ),
                     ),
@@ -78,7 +78,7 @@ class ResourceMapView extends StatelessWidget {
                       color: AppTheme.accentClayOrange,
                       boxShadow: [
                         BoxShadow(
-                          color: AppTheme.accentClayOrange.withOpacity(0.5),
+                          color: AppTheme.accentClayOrange.withValues(alpha: 0.5),
                           blurRadius: 8,
                           spreadRadius: 1,
                         ),
@@ -113,7 +113,7 @@ class ResourceMapView extends StatelessWidget {
                         ),
                         boxShadow: [
                           BoxShadow(
-                            color: resource.type.color.withOpacity(
+                            color: resource.type.color.withValues(alpha: 
                               isSelected ? 0.45 : 0.2,
                             ),
                             blurRadius: isSelected ? 16 : 8,

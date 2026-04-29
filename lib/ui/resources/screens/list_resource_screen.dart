@@ -21,7 +21,6 @@ class _ListResourceScreenState extends State<ListResourceScreen> {
 
   Position? _currentPosition;
   String? _errorMessage;
-  bool _isLocationLoading = true;
   bool _isResourcesLoading = true;
   List<ResourceModel> _resources = [];
   String _searchQuery = '';
@@ -41,7 +40,6 @@ class _ListResourceScreenState extends State<ListResourceScreen> {
   // 1. Kick off BOTH tasks at the same time without awaiting them here
   void _initializeData() {
     setState(() {
-      _isLocationLoading = true;
       _isResourcesLoading = true;
       _errorMessage = null;
       _resources = [];
@@ -59,7 +57,6 @@ class _ListResourceScreenState extends State<ListResourceScreen> {
       if (!mounted) return;
       setState(() {
         _currentPosition = position;
-        _isLocationLoading = false;
         // If resources loaded before location, sort them now that we have GPS!
         if (_resources.isNotEmpty) {
           _resources = _sortByDistance(_resources);
@@ -69,7 +66,6 @@ class _ListResourceScreenState extends State<ListResourceScreen> {
       if (!mounted) return;
       setState(() {
         _errorMessage = e.toString();
-        _isLocationLoading = false;
       });
     }
   }

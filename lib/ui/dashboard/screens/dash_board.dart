@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:healthpin/ui/dashboard/widgets/bottom_nav_bar.dart';
-import 'package:healthpin/services/auth_service.dart';
 import 'package:healthpin/ui/home/screens/home_map_screen.dart';
 import 'package:healthpin/ui/resources/screens/add_resource_screen.dart';
 import 'package:healthpin/ui/resources/screens/list_resource_screen.dart';
@@ -14,7 +13,6 @@ class DashBoard extends StatefulWidget {
 }
 
 class _DashBoardState extends State<DashBoard> {
-  final AuthService _authServices = AuthService();
 
   int currentIndex = 0;
 

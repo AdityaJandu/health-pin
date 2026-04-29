@@ -37,8 +37,8 @@ class _EnhancedSearchBarState extends State<EnhancedSearchBar> {
           boxShadow: [
             BoxShadow(
               color: _hasFocus
-                  ? AppTheme.primaryDeepForest.withOpacity(0.25)
-                  : Colors.black.withOpacity(0.18),
+                  ? AppTheme.primaryDeepForest.withValues(alpha: 0.25)
+                  : Colors.black.withValues(alpha: 0.18),
               blurRadius: _hasFocus ? 20 : 12,
               offset: const Offset(0, 4),
             ),

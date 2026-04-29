@@ -40,11 +40,11 @@ class TypeFilterBar extends StatelessWidget {
                   decoration: BoxDecoration(
                     color: isActive
                         ? AppTheme.primaryDeepForest
-                        : Colors.white.withOpacity(0.92),
+                        : Colors.white.withValues(alpha: 0.92),
                     borderRadius: BorderRadius.circular(20),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withOpacity(0.12),
+                        color: Colors.black.withValues(alpha: 0.12),
                         blurRadius: 8,
                         offset: const Offset(0, 2),
                       ),
@@ -71,8 +71,8 @@ class TypeFilterBar extends StatelessWidget {
                         ),
                         decoration: BoxDecoration(
                           color: isActive
-                              ? Colors.white.withOpacity(0.25)
-                              : AppTheme.primaryDeepForest.withOpacity(0.1),
+                              ? Colors.white.withValues(alpha: 0.25)
+                              : AppTheme.primaryDeepForest.withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(8),
                         ),
                         child: Text(

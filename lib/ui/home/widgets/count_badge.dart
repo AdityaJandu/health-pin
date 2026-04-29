@@ -14,7 +14,7 @@ class CountBadge extends StatelessWidget {
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: AppTheme.primaryDeepForest.withOpacity(0.4),
+            color: AppTheme.primaryDeepForest.withValues(alpha: 0.4),
             blurRadius: 10,
             offset: const Offset(0, 3),
           ),
