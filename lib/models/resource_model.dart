@@ -1,7 +1,7 @@
 import 'package:healthpin/models/resource_type.dart';
 
 class ResourceModel {
-  final String id;
+  final String? id;
   final String name;
   final String description;
   final ResourceType type;
@@ -13,11 +13,11 @@ class ResourceModel {
   final String? openingHours;
   final bool isVerified;
   final int upvoteCount;
-  final String submittedBy; // user id
+  final String submittedBy;
   final DateTime createdAt;
 
   const ResourceModel({
-    required this.id,
+    this.id,
     required this.name,
     required this.description,
     required this.type,
@@ -42,22 +42,21 @@ class ResourceModel {
         (e) => e.name == map['type'],
         orElse: () => ResourceType.clinic,
       ),
-      latitude: map['latitude'],
-      longitude: map['longitude'],
+      latitude: (map['latitude'] as num).toDouble(),
+      longitude: (map['longitude'] as num).toDouble(),
       address: map['address'],
       contactNumber: map['contact_number'],
       photoUrl: map['photo_url'],
       openingHours: map['opening_hours'],
-      isVerified: map['is_verified'],
-      upvoteCount: map['upvote_count'],
-      submittedBy: map['submitted_by'],
+      isVerified: map['is_verified'] ?? false,
+      upvoteCount: map['upvote_count'] ?? 0,
+      submittedBy: map['submitted_by'] ?? '',
       createdAt: DateTime.parse(map['created_at']),
     );
   }
 
   Map<String, dynamic> toMap() {
     return {
-      'id': id,
       'name': name,
       'description': description,
       'type': type.name,
@@ -70,7 +69,6 @@ class ResourceModel {
       'is_verified': isVerified,
       'upvote_count': upvoteCount,
       'submitted_by': submittedBy,
-      'created_at': createdAt.toIso8601String(),
     };
   }
 }

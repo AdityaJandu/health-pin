@@ -51,4 +51,13 @@ class LocationPermissionService {
       locationSettings: locationSettings,
     );
   }
+
+  Future<Position> getCurrentLocation() {
+    return Geolocator.getCurrentPosition(
+      locationSettings: LocationSettings(
+        accuracy: LocationAccuracy.high,
+        distanceFilter: 100,
+      ),
+    );
+  }
 }
