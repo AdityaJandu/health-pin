@@ -96,7 +96,7 @@ class AppTheme {
             borderRadius: BorderRadius.circular(defaultRadius),
           ),
           elevation: 2,
-          shadowColor: textCharcoal.withAlpha(20),
+          shadowColor: textCharcoal.withValues(alpha: 20/255),
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
           textStyle: GoogleFonts.spaceGrotesk(
             fontWeight: FontWeight.w700,
@@ -109,11 +109,11 @@ class AppTheme {
         fillColor: backgroundWarmOffWhite,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(defaultRadius),
-          borderSide: BorderSide(color: textCharcoal.withAlpha(40)),
+          borderSide: BorderSide(color: textCharcoal.withValues(alpha: 40/255)),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(defaultRadius),
-          borderSide: BorderSide(color: textCharcoal.withAlpha(40)),
+          borderSide: BorderSide(color: textCharcoal.withValues(alpha: 40/255)),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(defaultRadius),
@@ -129,7 +129,7 @@ class AppTheme {
         elevation: 0,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(defaultRadius),
-          side: BorderSide(color: textCharcoal.withAlpha(25), width: 1),
+          side: BorderSide(color: textCharcoal.withValues(alpha: 25/255), width: 1),
         ),
       ),
     );

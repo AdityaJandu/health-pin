@@ -17,16 +17,14 @@ class ResourceService {
 
   // Read — stream all resources:
   Stream<List<ResourceModel>> streamResources() {
-    return Supabase.instance.client
-        .from('resources')
+    return _database
         .stream(primaryKey: ['id'])
         .map((data) => data.map((map) => ResourceModel.fromMap(map)).toList());
   }
 
   // Read — stream by type:
   Stream<List<ResourceModel>> streamResourcesByType(ResourceType type) {
-    return Supabase.instance.client
-        .from('resources')
+    return _database
         .stream(primaryKey: ['id'])
         .eq('type', type.name)
         .map((data) => data.map((map) => ResourceModel.fromMap(map)).toList());

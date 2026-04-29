@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:salomon_bottom_bar/salomon_bottom_bar.dart';
-import '../theme/app_theme.dart';
+import '../../../theme/app_theme.dart';
 
 class BottomNavBar extends StatelessWidget {
   const BottomNavBar({
