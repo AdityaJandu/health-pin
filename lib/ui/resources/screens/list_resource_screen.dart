@@ -5,8 +5,9 @@ import 'package:healthpin/models/resource_model.dart';
 import 'package:healthpin/services/location_permission_service.dart';
 import 'package:healthpin/services/resource_service.dart';
 import 'package:healthpin/theme/app_theme.dart';
-import 'package:healthpin/ui/home/widgets/resource_list_item.dart';
 import 'package:healthpin/ui/home/widgets/resource_search_bar.dart';
+import 'package:healthpin/ui/resources/widgets/resource_list_states.dart';
+import 'package:healthpin/ui/resources/widgets/resource_list_view.dart';
 
 class ListResourceScreen extends StatefulWidget {
   const ListResourceScreen({super.key});
@@ -37,7 +38,6 @@ class _ListResourceScreenState extends State<ListResourceScreen> {
     super.dispose();
   }
 
-  // 1. Kick off BOTH tasks at the same time without awaiting them here
   void _initializeData() {
     setState(() {
       _isResourcesLoading = true;
@@ -49,7 +49,6 @@ class _ListResourceScreenState extends State<ListResourceScreen> {
     _setupResourceStream();
   }
 
-  // 2. Fetch location asynchronously
   Future<void> _fetchLocation() async {
     try {
       final position = await LocationPermissionService().getCurrentLocation();
@@ -57,7 +56,6 @@ class _ListResourceScreenState extends State<ListResourceScreen> {
       if (!mounted) return;
       setState(() {
         _currentPosition = position;
-        // If resources loaded before location, sort them now that we have GPS!
         if (_resources.isNotEmpty) {
           _resources = _sortByDistance(_resources);
         }
@@ -70,14 +68,12 @@ class _ListResourceScreenState extends State<ListResourceScreen> {
     }
   }
 
-  // 3. Listen to resources asynchronously
   void _setupResourceStream() {
     _resourceSubscription?.cancel();
     _resourceSubscription = _resourceService.streamResources().listen(
       (resources) {
         if (!mounted) return;
         setState(() {
-          // If we have position, sort them. Otherwise, just show them unsorted temporarily.
           _resources = _currentPosition != null
               ? _sortByDistance(resources)
               : resources;
@@ -93,7 +89,6 @@ class _ListResourceScreenState extends State<ListResourceScreen> {
       },
     );
 
-    // Timeout safety net for resources
     Future.delayed(const Duration(seconds: 8), () {
       if (mounted && _isResourcesLoading) {
         setState(() => _isResourcesLoading = false);
@@ -121,7 +116,6 @@ class _ListResourceScreenState extends State<ListResourceScreen> {
   }
 
   String _formatDistance(ResourceModel resource) {
-    // 4. Safely handle the case where resources load faster than GPS
     if (_currentPosition == null) return 'Locating...';
 
     final meters = _distanceToResource(resource);
@@ -161,7 +155,7 @@ class _ListResourceScreenState extends State<ListResourceScreen> {
                   style: Theme.of(context).textTheme.titleLarge?.copyWith(
                     fontWeight: FontWeight.w700,
                     color: AppTheme.primaryDeepForest,
-                    letterSpacing: -0.3, // Gives it a slightly more modern look
+                    letterSpacing: -0.3,
                   ),
                 ),
                 Text(
@@ -191,101 +185,26 @@ class _ListResourceScreenState extends State<ListResourceScreen> {
   }
 
   Widget _buildContent(List<ResourceModel> filteredResources) {
-    // Error State
     if (_errorMessage != null) {
-      return Center(
-        child: Padding(
-          padding: const EdgeInsets.all(24),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(Icons.error_outline, size: 64, color: Colors.grey.shade400),
-              const SizedBox(height: 16),
-              Text(
-                _errorMessage!,
-                textAlign: TextAlign.center,
-                style: const TextStyle(color: Colors.red, fontSize: 14),
-              ),
-              const SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: _initializeData,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppTheme.primaryDeepForest,
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 24,
-                    vertical: 12,
-                  ),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                ),
-                child: const Text('Retry'),
-              ),
-            ],
-          ),
-        ),
+      return ResourceErrorState(
+        errorMessage: _errorMessage!,
+        onRetry: _initializeData,
       );
     }
 
-    // Resources Loading (Skeleton)
-    // 5. Prioritize showing the skeleton for the list, ignoring the location loading state
     if (_isResourcesLoading) {
-      return ListView.builder(
-        padding: const EdgeInsets.all(16),
-        itemCount: 6,
-        itemBuilder: (_, _) => Container(
-          margin: const EdgeInsets.only(bottom: 12),
-          height: 80,
-          decoration: BoxDecoration(
-            color: Colors.grey.shade200,
-            borderRadius: BorderRadius.circular(12),
-          ),
-        ),
-      );
+      return const ResourceLoadingSkeleton();
     }
 
-    // Empty State
     if (filteredResources.isEmpty) {
-      return Center(
-        child: Padding(
-          padding: const EdgeInsets.all(24),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(Icons.search_off, size: 64, color: Colors.grey.shade400),
-              const SizedBox(height: 16),
-              Text(
-                _searchQuery.isEmpty
-                    ? 'No nearby resources found'
-                    : 'No results for "$_searchQuery"',
-                textAlign: TextAlign.center,
-                style: const TextStyle(fontSize: 16),
-              ),
-              const SizedBox(height: 8),
-              Text(
-                _searchQuery.isEmpty
-                    ? 'Try expanding your search area'
-                    : 'Try a different keyword',
-                style: TextStyle(color: Colors.grey.shade600),
-              ),
-            ],
-          ),
-        ),
-      );
+      return ResourceEmptyState(searchQuery: _searchQuery);
     }
 
-    // List
-    return ListView.builder(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-      itemCount: filteredResources.length,
-      itemBuilder: (context, index) {
-        final resource = filteredResources[index];
-        return ResourceListItem(
-          resource: resource,
-          distance: _formatDistance(resource),
-          onTap: () {},
-        );
-      },
+    return ResourceListView(
+      resources: filteredResources,
+      distanceFormatter: _formatDistance,
+      onResourceTap: (resource) {},
     );
   }
 }
+

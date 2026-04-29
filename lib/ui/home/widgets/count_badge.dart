@@ -8,7 +8,7 @@ class CountBadge extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       decoration: BoxDecoration(
         color: AppTheme.primaryDeepForest,
         borderRadius: BorderRadius.circular(20),
@@ -26,7 +26,7 @@ class CountBadge extends StatelessWidget {
           const Icon(Icons.place_rounded, color: Colors.white, size: 14),
           const SizedBox(width: 5),
           Text(
-            '$count resource${count == 1 ? '' : 's'} nearby',
+            '$count resource${count <= 1 ? '' : 's'} nearby',
             style: const TextStyle(
               color: Colors.white,
               fontSize: 12,

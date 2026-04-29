@@ -1,11 +1,18 @@
+import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:healthpin/components/custom_text_field.dart';
 import 'package:healthpin/models/resource_model.dart';
 import 'package:healthpin/models/resource_type.dart';
 import 'package:healthpin/services/auth_service.dart';
+import 'package:healthpin/services/image_service.dart';
 import 'package:healthpin/services/location_permission_service.dart';
 import 'package:healthpin/services/resource_service.dart';
 import 'package:healthpin/theme/app_theme.dart';
+import 'package:healthpin/ui/resources/widgets/location_input_section.dart';
+import 'package:healthpin/ui/resources/widgets/resource_image_picker.dart';
+import 'package:healthpin/ui/resources/widgets/resource_type_dropdown.dart';
+import 'package:image_picker/image_picker.dart';
 
 class AddResourceScreen extends StatefulWidget {
   final VoidCallback? onSuccess;
@@ -28,8 +35,11 @@ class _AddResourceScreenState extends State<AddResourceScreen> {
   final _resourceService = ResourceService();
   final _locationService = LocationPermissionService();
   final _authService = AuthService();
+  final _imageService = ImageService();
 
   ResourceType _selectedType = ResourceType.clinic;
+  File? _imageFile; // Mobile
+  Uint8List? _webImage; // Web
   bool _isSubmitting = false;
   bool _isFetchingLocation = false;
 
@@ -64,6 +74,23 @@ class _AddResourceScreenState extends State<AddResourceScreen> {
     }
   }
 
+  Future pickImage() async {
+    final ImagePicker picker = ImagePicker();
+    final XFile? image = await picker.pickImage(
+      source: ImageSource.gallery,
+      imageQuality: 70,
+    );
+
+    if (image != null) {
+      if (kIsWeb) {
+        _webImage = await image.readAsBytes();
+      } else {
+        _imageFile = File(image.path);
+      }
+      setState(() {});
+    }
+  }
+
   Future<void> _submitResource() async {
     if (!_formKey.currentState!.validate()) return;
 
@@ -80,6 +107,18 @@ class _AddResourceScreenState extends State<AddResourceScreen> {
     setState(() => _isSubmitting = true);
 
     try {
+      String? photoUrl;
+
+      final hasImage = kIsWeb ? _webImage != null : _imageFile != null;
+      if (hasImage) {
+        final bytes = kIsWeb ? _webImage! : await _imageFile!.readAsBytes();
+        final ext = kIsWeb ? 'png' : _imageFile!.path.split('.').last;
+        final fileName = "${DateTime.now().millisecondsSinceEpoch}.$ext";
+        final path = 'health-care/$fileName';
+
+        photoUrl = await _imageService.uploadImage(bytes, path);
+      }
+
       final resource = ResourceModel(
         name: _nameController.text.trim(),
         description: _descriptionController.text.trim(),
@@ -93,6 +132,7 @@ class _AddResourceScreenState extends State<AddResourceScreen> {
         openingHours: _hoursController.text.trim().isEmpty
             ? null
             : _hoursController.text.trim(),
+        photoUrl: photoUrl,
         isVerified: false,
         upvoteCount: 0,
         submittedBy: userId,
@@ -109,7 +149,6 @@ class _AddResourceScreenState extends State<AddResourceScreen> {
           ),
         );
 
-        // Clear all controllers
         _nameController.clear();
         _descriptionController.clear();
         _addressController.clear();
@@ -118,10 +157,8 @@ class _AddResourceScreenState extends State<AddResourceScreen> {
         _latController.clear();
         _lngController.clear();
 
-        // Reset form state
         _formKey.currentState!.reset();
 
-        // Navigate back or call success callback
         if (widget.onSuccess != null) {
           widget.onSuccess!();
         } else if (Navigator.canPop(context)) {
@@ -137,13 +174,6 @@ class _AddResourceScreenState extends State<AddResourceScreen> {
     } finally {
       if (mounted) setState(() => _isSubmitting = false);
     }
-  }
-
-  String _formatTypeName(ResourceType type) {
-    return type.name
-        .replaceAllMapped(RegExp(r'([A-Z])'), (match) => ' ${match.group(0)}')
-        .trim()
-        .toUpperCase();
   }
 
   @override
@@ -177,6 +207,21 @@ class _AddResourceScreenState extends State<AddResourceScreen> {
               ),
               const SizedBox(height: 32),
 
+              // ── Resource Photo ─────────────────────────────────────
+              ResourceImagePicker(
+                onImageSelected: (xfile) async {
+                  final bytes = await xfile.readAsBytes();
+                  setState(() {
+                    if (kIsWeb) {
+                      _webImage = bytes;
+                    } else {
+                      _imageFile = File(xfile.path);
+                    }
+                  });
+                },
+              ),
+              const SizedBox(height: 24),
+
               // ── Resource Name ──────────────────────────────────────
               CustomTextField(
                 label: 'RESOURCE NAME',
@@ -186,35 +231,11 @@ class _AddResourceScreenState extends State<AddResourceScreen> {
               const SizedBox(height: 24),
 
               // ── Resource Type ──────────────────────────────────────
-              Text(
-                'RESOURCE TYPE',
-                style: Theme.of(context).textTheme.labelLarge,
-              ),
-              const SizedBox(height: 8),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                decoration: BoxDecoration(
-                  color: AppTheme.backgroundWarmOffWhite,
-                  borderRadius: BorderRadius.circular(AppTheme.defaultRadius),
-                  border: Border.all(
-                    color: AppTheme.textCharcoal.withAlpha(40),
-                  ),
-                ),
-                child: DropdownButtonHideUnderline(
-                  child: DropdownButton<ResourceType>(
-                    value: _selectedType,
-                    isExpanded: true,
-                    items: ResourceType.values.map((type) {
-                      return DropdownMenuItem(
-                        value: type,
-                        child: Text(_formatTypeName(type)),
-                      );
-                    }).toList(),
-                    onChanged: (value) {
-                      if (value != null) setState(() => _selectedType = value);
-                    },
-                  ),
-                ),
+              ResourceTypeDropdown(
+                value: _selectedType,
+                onChanged: (value) {
+                  if (value != null) setState(() => _selectedType = value);
+                },
               ),
               const SizedBox(height: 24),
 
@@ -227,52 +248,11 @@ class _AddResourceScreenState extends State<AddResourceScreen> {
               const SizedBox(height: 24),
 
               // ── Coordinates ────────────────────────────────────────
-              Row(
-                children: [
-                  Expanded(
-                    child: CustomTextField(
-                      label: 'LATITUDE',
-                      hintText: '0.000000',
-                      controller: _latController,
-                      keyboardType: const TextInputType.numberWithOptions(
-                        decimal: true,
-                        signed: true,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 16),
-                  Expanded(
-                    child: CustomTextField(
-                      label: 'LONGITUDE',
-                      hintText: '0.000000',
-                      controller: _lngController,
-                      keyboardType: const TextInputType.numberWithOptions(
-                        decimal: true,
-                        signed: true,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 12),
-              TextButton.icon(
-                onPressed: _isFetchingLocation ? null : _fetchCurrentLocation,
-                icon: _isFetchingLocation
-                    ? const SizedBox(
-                        width: 16,
-                        height: 16,
-                        child: CircularProgressIndicator(strokeWidth: 2),
-                      )
-                    : const Icon(Icons.my_location, size: 18),
-                label: Text(
-                  _isFetchingLocation
-                      ? 'FETCHING LOCATION...'
-                      : 'USE CURRENT LOCATION',
-                ),
-                style: TextButton.styleFrom(
-                  foregroundColor: AppTheme.primaryDeepForest,
-                  padding: EdgeInsets.zero,
-                ),
+              LocationInputSection(
+                latController: _latController,
+                lngController: _lngController,
+                isFetchingLocation: _isFetchingLocation,
+                onFetchLocation: _fetchCurrentLocation,
               ),
               const SizedBox(height: 24),
 

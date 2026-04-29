@@ -258,7 +258,7 @@ class _HomeMapScreenState extends State<HomeMapScreen>
           // ── Resource Count Badge ──────────────────────────────────────
           if (!_isLoading && _currentPosition != null)
             Positioned(
-              bottom: 220,
+              bottom: 230,
               left: 20,
               child: CountBadge(count: filteredResources.length),
             ),
