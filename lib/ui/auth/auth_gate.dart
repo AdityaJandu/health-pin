@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:healthpin/theme/app_theme.dart';
 import 'package:healthpin/ui/dashboard/screens/dash_board.dart';
 import 'package:healthpin/ui/auth/screens/sign_up_screen.dart';
 import 'package:healthpin/ui/auth/screens/splash_screen.dart';
@@ -13,7 +14,10 @@ class AuthGate extends StatelessWidget {
       stream: Supabase.instance.client.auth.onAuthStateChange,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const SplashScreen();
+          return const Scaffold(
+            backgroundColor: AppTheme.primaryDeepForest,
+            body: SplashView(),
+          );
         }
         if (snapshot.hasError) {
           return Scaffold(
