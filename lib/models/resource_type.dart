@@ -5,8 +5,8 @@ enum ResourceType {
   pharmacy,
   water,
   vaccine,
-  mentalHealth,
-  bloodBank,
+  mentalhealth,
+  bloodbank,
   emergency;
 
   IconData get icon {
@@ -19,9 +19,9 @@ enum ResourceType {
         return Icons.water_drop;
       case ResourceType.vaccine:
         return Icons.vaccines;
-      case ResourceType.mentalHealth:
+      case ResourceType.mentalhealth:
         return Icons.psychology;
-      case ResourceType.bloodBank:
+      case ResourceType.bloodbank:
         return Icons.bloodtype;
       case ResourceType.emergency:
         return Icons.emergency;
@@ -38,9 +38,9 @@ enum ResourceType {
         return Colors.cyan;
       case ResourceType.vaccine:
         return Colors.purple;
-      case ResourceType.mentalHealth:
+      case ResourceType.mentalhealth:
         return Colors.orange;
-      case ResourceType.bloodBank:
+      case ResourceType.bloodbank:
         return Colors.red;
       case ResourceType.emergency:
         return Colors.deepOrange;
