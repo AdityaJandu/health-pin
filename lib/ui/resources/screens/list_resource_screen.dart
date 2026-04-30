@@ -4,6 +4,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:healthpin/models/resource_model.dart';
 import 'package:healthpin/services/location_permission_service.dart';
 import 'package:healthpin/services/resource_service.dart';
+import 'package:healthpin/ui/resources/screens/resource_screen.dart';
 
 import 'package:healthpin/ui/resources/widgets/resource_list_header.dart';
 import 'package:healthpin/ui/resources/widgets/resource_list_states.dart';
@@ -25,8 +26,9 @@ class _ListResourceScreenState extends State<ListResourceScreen> {
   StreamSubscription<List<ResourceModel>>? _resourceSubscription;
 
   Position? _currentPosition;
-  String? _errorMessage;
+  String? _errorMessage; // Used ONLY for resource loading errors now
   bool _isResourcesLoading = true;
+  bool _isLocationFailed = false; // Track location failures separately
   List<ResourceModel> _resources = [];
   String _searchQuery = '';
 
@@ -46,6 +48,7 @@ class _ListResourceScreenState extends State<ListResourceScreen> {
     setState(() {
       _isResourcesLoading = true;
       _errorMessage = null;
+      _isLocationFailed = false;
       _resources = [];
     });
     _fetchLocation();
@@ -54,7 +57,16 @@ class _ListResourceScreenState extends State<ListResourceScreen> {
 
   Future<void> _fetchLocation() async {
     try {
+      final cachedPosition = await Geolocator.getLastKnownPosition();
+      if (cachedPosition != null && mounted) {
+        setState(() {
+          _currentPosition = cachedPosition;
+          if (_resources.isNotEmpty) _resources = _sortByDistance(_resources);
+        });
+      }
+
       final position = await LocationPermissionService().getCurrentLocation();
+
       if (!mounted) return;
       setState(() {
         _currentPosition = position;
@@ -62,7 +74,10 @@ class _ListResourceScreenState extends State<ListResourceScreen> {
       });
     } catch (e) {
       if (!mounted) return;
-      setState(() => _errorMessage = e.toString());
+      setState(() {
+        _isLocationFailed = _currentPosition == null;
+      });
+      debugPrint('Location fetch failed: $e');
     }
   }
 
@@ -87,6 +102,7 @@ class _ListResourceScreenState extends State<ListResourceScreen> {
       },
     );
 
+    // Failsafe timeout for loading state
     Future.delayed(const Duration(seconds: 8), () {
       if (mounted && _isResourcesLoading) {
         setState(() => _isResourcesLoading = false);
@@ -114,7 +130,11 @@ class _ListResourceScreenState extends State<ListResourceScreen> {
   }
 
   String _formatDistance(ResourceModel resource) {
-    if (_currentPosition == null) return 'Locating...';
+    if (_currentPosition == null) {
+      // Gracefully handle the scenario where location completely fails
+      return _isLocationFailed ? 'Distance unavailable' : 'Locating...';
+    }
+
     final meters = _distanceToResource(resource);
     return meters < 1000
         ? '${meters.toStringAsFixed(0)}m away'
@@ -168,7 +188,12 @@ class _ListResourceScreenState extends State<ListResourceScreen> {
       resources: filtered,
       distanceFormatter: _formatDistance,
       onResourceTap: (resource) {
-        // Navigate to details if needed
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => ResourceScreen(resourceModel: resource),
+          ),
+        );
       },
     );
   }
