@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
@@ -80,7 +81,7 @@ class _AddResourceScreenState extends State<AddResourceScreen> {
   }
 
   Future<void> _submitResource() async {
-    if (!_formKey.currentState!.validate()) return;
+    // if (!_formKey.currentState!.validate()) return;
 
     final userId = _authService.getUserId();
     if (userId == null) {
@@ -136,15 +137,6 @@ class _AddResourceScreenState extends State<AddResourceScreen> {
           ),
         );
 
-        _nameController.clear();
-        _descriptionController.clear();
-        _addressController.clear();
-        _contactController.clear();
-        _hoursController.clear();
-        _latController.clear();
-        _lngController.clear();
-        _formKey.currentState!.reset();
-
         if (widget.onSuccess != null) {
           widget.onSuccess!();
         } else if (Navigator.canPop(context)) {
@@ -158,6 +150,13 @@ class _AddResourceScreenState extends State<AddResourceScreen> {
         ).showSnackBar(SnackBar(content: Text('Failed to add resource: $e')));
       }
     } finally {
+      _nameController.clear();
+      _descriptionController.clear();
+      _addressController.clear();
+      _contactController.clear();
+      _hoursController.clear();
+      _latController.clear();
+      _lngController.clear();
       if (mounted) setState(() => _isSubmitting = false);
     }
   }
