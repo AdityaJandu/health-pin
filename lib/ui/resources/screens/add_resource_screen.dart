@@ -81,7 +81,7 @@ class _AddResourceScreenState extends State<AddResourceScreen> {
   }
 
   Future<void> _submitResource() async {
-    // if (!_formKey.currentState!.validate()) return;
+    if (!_formKey.currentState!.validate()) return;
 
     final userId = _authService.getUserId();
     if (userId == null) {

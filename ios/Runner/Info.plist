@@ -61,5 +61,9 @@
 	<string>This app needs access to your camera to allow you to take photos of healthcare resources.</string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>This app needs access to your microphone if you want to record videos of healthcare resources.</string>
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+		<string>https</string>
+	</array>
 </dict>
 </plist>

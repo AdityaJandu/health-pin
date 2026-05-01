@@ -46,6 +46,7 @@ dependencies:
   image_picker: ^1.2.2
   another_flutter_splash_screen: ^1.2.1
   intl: ^0.20.2
+  url_launcher: ^6.3.2
 
 dev_dependencies:
   flutter_test:

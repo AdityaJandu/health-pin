@@ -77,16 +77,11 @@ class _ResourceScreenState extends State<ResourceScreen> {
 
           // ── Details Card ────────────────────────────────────────────
           SliverToBoxAdapter(
-            child: ResourceDetailsSection(
-              resource: r,
-              openStatus: openStatus,
-            ),
+            child: ResourceDetailsSection(resource: r, openStatus: openStatus),
           ),
 
           // ── Description Card ────────────────────────────────────────
-          SliverToBoxAdapter(
-            child: ResourceDescriptionSection(resource: r),
-          ),
+          SliverToBoxAdapter(child: ResourceDescriptionSection(resource: r)),
 
           // ── Map Card ────────────────────────────────────────────────
           SliverToBoxAdapter(
@@ -98,9 +93,7 @@ class _ResourceScreenState extends State<ResourceScreen> {
           ),
 
           // ── Meta Card ───────────────────────────────────────────────
-          SliverToBoxAdapter(
-            child: ResourceMetaSection(resource: r),
-          ),
+          SliverToBoxAdapter(child: ResourceMetaSection(resource: r)),
 
           const SliverToBoxAdapter(child: SizedBox(height: 100)),
         ],
@@ -112,6 +105,8 @@ class _ResourceScreenState extends State<ResourceScreen> {
         upvoted: _upvoted,
         upvoteCount: _upvoteCount,
         onUpvote: _toggleUpvote,
+        long: r.longitude,
+        lat: r.latitude,
       ),
     );
   }

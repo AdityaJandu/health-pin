@@ -30,9 +30,20 @@ class CustomTextField extends StatelessWidget {
           controller: controller,
           obscureText: obscureText,
           keyboardType: keyboardType,
-          style: Theme.of(context).textTheme.bodyLarge,
+          style: Theme.of(context).textTheme.bodyMedium,
           decoration: InputDecoration(
             hintText: hintText,
+            hintStyle: const TextStyle(
+              color: Color.fromARGB(126, 61, 60, 60),
+              fontSize: 14,
+            ),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: const BorderSide(
+                color: Color.fromARGB(173, 94, 94, 94),
+                width: 1,
+              ),
+            ),
           ),
         ),
       ],

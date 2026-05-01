@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:healthpin/theme/app_theme.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class ResourceBottomBar extends StatelessWidget {
   final Color color;
   final bool upvoted;
   final int upvoteCount;
   final VoidCallback onUpvote;
+  final double long;
+  final double lat;
 
   const ResourceBottomBar({
     super.key,
@@ -13,7 +16,23 @@ class ResourceBottomBar extends StatelessWidget {
     required this.upvoted,
     required this.upvoteCount,
     required this.onUpvote,
+    required this.long,
+    required this.lat,
   });
+
+  Future<void> _openMaps(BuildContext context) async {
+    final uri = Uri.parse(
+      'https://www.google.com/maps/dir/?api=1&destination=$lat,$long&travelmode=driving',
+    );
+
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(uri, mode: LaunchMode.externalApplication);
+    } else {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Could not open maps')));
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -96,7 +115,7 @@ class ResourceBottomBar extends StatelessWidget {
             child: SizedBox(
               height: 50,
               child: ElevatedButton.icon(
-                onPressed: () {},
+                onPressed: () => _openMaps(context),
                 icon: const Icon(Icons.directions_rounded, size: 18),
                 label: const Text(
                   'Get Directions',
