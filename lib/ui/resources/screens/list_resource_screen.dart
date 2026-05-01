@@ -65,7 +65,7 @@ class _ListResourceScreenState extends State<ListResourceScreen> {
         });
       }
 
-      final position = await LocationPermissionService().determinePosition();
+      final position = await LocationPermissionService().getCurrentLocation();
 
       if (!mounted) return;
       setState(() {
