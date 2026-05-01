@@ -43,9 +43,10 @@ class ResourceDetailsHeader extends StatelessWidget {
         builder: (context, constraints) {
           final safeArea = MediaQuery.of(context).padding.top;
           final collapsedHeight = kToolbarHeight + safeArea;
-          final progress = ((expandedHeight - constraints.maxHeight) /
-                  (expandedHeight - collapsedHeight))
-              .clamp(0.0, 1.0);
+          final progress =
+              ((expandedHeight - constraints.maxHeight) /
+                      (expandedHeight - collapsedHeight))
+                  .clamp(0.0, 1.0);
           final titleOpacity = ((progress - 0.75) / 0.25).clamp(0.0, 1.0);
 
           return FlexibleSpaceBar(
@@ -54,10 +55,10 @@ class ResourceDetailsHeader extends StatelessWidget {
             title: Opacity(
               opacity: titleOpacity,
               child: Text(
-                name,
+                name.toUpperCase(),
                 style: const TextStyle(
                   color: Colors.white,
-                  fontSize: 16,
+                  fontSize: 18,
                   fontWeight: FontWeight.w700,
                 ),
                 maxLines: 1,

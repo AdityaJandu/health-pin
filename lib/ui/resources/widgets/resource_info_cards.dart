@@ -202,9 +202,7 @@ class ResourceDetailsSection extends StatelessWidget {
               value: resource.contactNumber!,
               color: color,
               onTap: () {
-                Clipboard.setData(
-                  ClipboardData(text: resource.contactNumber!),
-                );
+                Clipboard.setData(ClipboardData(text: resource.contactNumber!));
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
                     content: const Text('Number copied to clipboard'),
@@ -252,11 +250,7 @@ class ResourceDescriptionSection extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          SectionLabel(
-            icon: Icons.notes_rounded,
-            label: 'ABOUT',
-            color: color,
-          ),
+          SectionLabel(icon: Icons.notes_rounded, label: 'ABOUT', color: color),
           const SizedBox(height: 10),
           Text(
             resource.description,
@@ -300,7 +294,8 @@ class ResourceMetaSection extends StatelessWidget {
             runSpacing: 8,
             children: [
               MetaChip(
-                label: 'Added ${ResourceFormatter.formatDate(resource.createdAt)}',
+                label:
+                    'Added ${ResourceFormatter.formatDate(resource.createdAt)}',
                 icon: Icons.calendar_today_rounded,
               ),
               MetaChip(
@@ -336,10 +331,7 @@ class ResourceMetaSection extends StatelessWidget {
                 const SizedBox(width: 8),
                 const Text(
                   'Submitted by ',
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: AppTheme.outline,
-                  ),
+                  style: TextStyle(fontSize: 12, color: AppTheme.outline),
                 ),
                 Expanded(
                   child: Text(
@@ -576,7 +568,12 @@ class MetaChip extends StatelessWidget {
   final String label;
   final IconData icon;
   final Color? color;
-  const MetaChip({super.key, required this.label, required this.icon, this.color});
+  const MetaChip({
+    super.key,
+    required this.label,
+    required this.icon,
+    this.color,
+  });
 
   @override
   Widget build(BuildContext context) {

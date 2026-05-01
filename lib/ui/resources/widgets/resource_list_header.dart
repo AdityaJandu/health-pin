@@ -35,11 +35,11 @@ class ResourceListHeader extends StatelessWidget {
                     Text(
                       'NEARBY RESOURCES',
                       style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                            color: Colors.white,
-                            fontWeight: FontWeight.w800,
-                            letterSpacing: 1.2,
-                            fontSize: 20,
-                          ),
+                        color: Colors.white,
+                        fontWeight: FontWeight.w800,
+                        letterSpacing: 1.2,
+                        fontSize: 20,
+                      ),
                     ),
                     const SizedBox(height: 2),
                     Text(
@@ -47,9 +47,9 @@ class ResourceListHeader extends StatelessWidget {
                           ? 'Sorted by distance from you'
                           : 'Active locations in your area',
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            color: Colors.white.withAlpha(180),
-                            letterSpacing: 0.2,
-                          ),
+                        color: Colors.white.withAlpha(180),
+                        letterSpacing: 0.2,
+                      ),
                     ),
                   ],
                 ),
@@ -78,10 +78,7 @@ class ResourceListHeader extends StatelessWidget {
           const SizedBox(height: 16),
 
           // Reusable Search Bar
-          EnhancedSearchBar(
-            onChanged: onSearchChanged,
-            resultCount: count,
-          ),
+          EnhancedSearchBar(onChanged: onSearchChanged, resultCount: count),
         ],
       ),
     );
