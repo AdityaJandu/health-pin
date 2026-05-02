@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:healthpin/models/user_model.dart';
 import 'package:healthpin/services/auth_service.dart';
@@ -59,34 +60,56 @@ class _ProfileScreenState extends State<ProfileScreen>
   }
 
   void _handleLogout() async {
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        backgroundColor: AppTheme.backgroundWarmOffWhite,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        title: const Text(
-          'Log out?',
-          style: TextStyle(fontWeight: FontWeight.w700),
-        ),
-        content: const Text('You will be returned to the login screen.'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx, false),
-            child: Text(
-              'Cancel',
-              style: TextStyle(color: AppTheme.primaryDeepForest),
+    final isIOS = Theme.of(context).platform == TargetPlatform.iOS;
+
+    final confirmed = isIOS
+        ? await showCupertinoDialog<bool>(
+            context: context,
+            builder: (ctx) => CupertinoAlertDialog(
+              title: const Text('Log out?'),
+              content: const Text('You will be returned to the login screen.'),
+              actions: [
+                CupertinoDialogAction(
+                  onPressed: () => Navigator.pop(ctx, false),
+                  child: const Text('Cancel'),
+                ),
+                CupertinoDialogAction(
+                  isDestructiveAction: true,
+                  onPressed: () => Navigator.pop(ctx, true),
+                  child: const Text('Log Out'),
+                ),
+              ],
             ),
-          ),
-          TextButton(
-            onPressed: () => Navigator.pop(ctx, true),
-            child: const Text(
-              'Log Out',
-              style: TextStyle(color: Colors.redAccent),
+          )
+        : await showDialog<bool>(
+            context: context,
+            builder: (ctx) => AlertDialog(
+              backgroundColor: AppTheme.backgroundWarmOffWhite,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+              title: const Text(
+                'Log out?',
+                style: TextStyle(fontWeight: FontWeight.w700),
+              ),
+              content: const Text('You will be returned to the login screen.'),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(ctx, false),
+                  child: Text(
+                    'Cancel',
+                    style: TextStyle(color: AppTheme.primaryDeepForest),
+                  ),
+                ),
+                TextButton(
+                  onPressed: () => Navigator.pop(ctx, true),
+                  child: const Text(
+                    'Log Out',
+                    style: TextStyle(color: Colors.redAccent),
+                  ),
+                ),
+              ],
             ),
-          ),
-        ],
-      ),
-    );
+          );
+
     if (confirmed == true) await _authService.logOut();
   }
 

@@ -19,8 +19,12 @@ class UserDatabase {
 
   // Get by id:
   Future<UserModel?> getUserById(String id) async {
-    final data = await _database.select().eq('id', id).single();
-    return UserModel.fromMap(data);
+    try {
+      final data = await _database.select().eq('id', id).single();
+      return UserModel.fromMap(data);
+    } catch (e) {
+      return null;
+    }
   }
 
   // Update:
